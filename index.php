@@ -6,6 +6,9 @@ header('Content-Type: application/rss+xml; charset=utf-8');
 *	@date 2018-08-16
 */
 
+// define("BASE_URL", getBaseUrl());
+define("BASE_URL", "https://gera.ratsinfomanagement.net/termine");
+
 $rssName = "gera.ratsinfomanagement.net.rss";
 $now = date_create('now');
 if (file_exists($rssName)) {
@@ -19,6 +22,8 @@ if (file_exists($rssName)) {
 	} else {
 		//	new
 	}
+} else {
+	$fdate = $now;
 }
 
 $file = "https://gera.ratsinfomanagement.net/termine/ics/SD.NET_RIM_4.ics";
@@ -32,13 +37,13 @@ $output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <rss version=\"2.0\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\" xmlns:wfw=\"http://wellformedweb.org/CommentAPI/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:sy=\"http://purl.org/rss/1.0/modules/syndication/\" xmlns:slash=\"http://purl.org/rss/1.0/modules/slash/\">
 <channel>
 	<title>gera.ratsinfomanagement.net</title>
-	<atom:link href=\"http://10.1.43.30/sdnet2rss/\" rel=\"self\" type=\"application/rss+xml\" />
-	<link>http://10.1.43.30/sdnet2rss/</link>
+	<atom:link href=\"".BASE_URL."\" rel=\"self\" type=\"application/rss+xml\" />
+	<link>".BASE_URL."</link>
 	<description></description>
-	<lastBuildDate>Thu, 16 Aug 2018 12:29:16 +0000</lastBuildDate>
+	<lastBuildDate>".$fdate->format(DateTime::RSS)."</lastBuildDate>
 	<language>de-DE</language>
 	<sy:updatePeriod>hourly</sy:updatePeriod>
-	<sy:updateFrequency>1</sy:updateFrequency>
+	<sy:updateFrequency>6</sy:updateFrequency>
 	<generator>MDY</generator>
 ";
 foreach($sessions as $s) {
@@ -145,4 +150,29 @@ class ics {
         return $icsDates;
     }
 }
+
+
+
+/**
+ * Suppose, you are browsing in your localhost 
+ * http://localhost/myproject/index.php?id=8
+ */
+function getBaseUrl() 
+{
+    // output: /myproject/index.php
+    $currentPath = $_SERVER['PHP_SELF']; 
+
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index ) 
+    $pathInfo = pathinfo($currentPath); 
+
+    // output: localhost
+    $hostName = $_SERVER['HTTP_HOST']; 
+
+    // output: http://
+    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+
+    // return: http://localhost/myproject/
+    return $protocol.'://'.$hostName.$pathInfo['dirname']."/";
+}
+
 ?>
